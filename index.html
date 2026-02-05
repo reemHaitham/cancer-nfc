@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cancer Journey NFC — MVP</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2b;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+
+      --chip-red:#e11d48;
+      --chip-orange:#f97316;
+      --chip-amber:#f59e0b;
+
+      --accent:#22c55e;
+      --purple:#2d2a7a;
+      --white:#ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", Helvetica;
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(59,130,246,.25), transparent 55%),
+                  radial-gradient(900px 600px at 95% 10%, rgba(34,197,94,.18), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 420px;
+      margin: 22px auto;
+      padding: 14px;
+    }
+
+    /* Top header */
+    .top{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .top .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .name{
+      font-weight: 900;
+      font-size: 34px;
+      letter-spacing: .5px;
+      line-height: 1;
+    }
+    .badge{
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.2);
+      border: 1px solid rgba(34,197,94,.35);
+      color: #bbf7d0;
+      text-transform: uppercase;
+      white-space:nowrap;
+    }
+    .sub{
+      margin-top: 8px;
+      color: rgba(226,232,240,.75);
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 12.5px;
+    }
+    .globe{
+      width:46px;height:46px;border-radius: 16px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .globe svg{opacity:.9}
+
+    /* Info bar */
+    .info{
+      margin-top: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color: rgba(226,232,240,.85);
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+    .info small{
+      display:block;
+      color: rgba(226,232,240,.65);
+      font-weight: 800;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .approved{
+      display:flex;align-items:center;gap:8px;
+      color: #a7f3d0;
+      font-weight: 900;
+      white-space:nowrap;
+      font-size: 12px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+    }
+    .check{
+      width:18px;height:18px;border-radius: 999px;
+      display:inline-grid;place-items:center;
+      background: rgba(34,197,94,.18);
+      border: 1px solid rgba(34,197,94,.35);
+    }
+
+    /* Section headings */
+    .section{
+      margin-top: 16px;
+    }
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: rgba(226,232,240,.75);
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin: 12px 4px 10px;
+    }
+    .icon{
+      width:28px;height:28px;border-radius: 10px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    /* Alert chips */
+    .chips{display:flex;flex-wrap:wrap;gap:10px;}
+    .chip{
+      padding: 14px 16px;
+      border-radius: 18px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.10);
+      min-width: 150px;
+      line-height: 1.15;
+    }
+    .chip .label{
+      display:block;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .85;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .chip.red{background: rgba(225,29,72,.92);}
+    .chip.orange{background: rgba(249,115,22,.92);}
+    .chip.amber{background: rgba(245,158,11,.92);}
+    .chip .value{font-size: 18px;}
+
+    /* Cards */
+    .card{
+      background: rgba(255,255,255,.95);
+      color: #0b1220;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(15,23,42,.08);
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 18px;
+    }
+    .k{color:#64748b;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:11px;}
+    .v{margin-top:4px;font-weight: 900;font-size: 20px;color:#0f172a;}
+    .v.small{font-size:18px;}
+
+    /* Investigations */
+    .card.purple{
+      background: var(--purple);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .list{
+      margin:0;
+      padding-left: 18px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+    .list li{line-height:1.25}
+    .line{
+      height:1px;
+      background: rgba(255,255,255,.14);
+      margin-top: 10px;
+    }
+    .good{color:#34d399;font-weight:900}
+    .bad{color:#60a5fa;font-weight:900} /* keeping screenshot vibe (blue-ish) */
+
+    /* Biomarkers chips */
+    .biochips{display:flex;gap:10px;flex-wrap:wrap;}
+    .bio{
+      background: rgba(255,255,255,.90);
+      border: 1px solid rgba(59,130,246,.18);
+      color: #1e293b;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+    .bio span{color:#4338ca}
+
+    /* Oncologist */
+    .call{
+      margin-top: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 26px;
+      padding: 14px 14px 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      box-shadow: var(--shadow);
+    }
+    .call .left{
+      display:flex;gap:10px;align-items:flex-start;
+      min-width: 0;
+    }
+    .call h3{
+      margin:0;
+      font-size: 22px;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 230px;
+    }
+    .call p{
+      margin:4px 0 0;
+      color: rgba(226,232,240,.65);
+      font-weight: 800;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 230px;
+    }
+    .callbtn{
+      width:60px;height:60px;
+      border-radius: 18px;
+      border: none;
+      background: rgba(34,197,94,.95);
+      display:grid;place-items:center;
+      box-shadow: var(--shadow);
+      cursor:pointer;
+    }
+
+    /* Locked box */
+    .locked{
+      margin-top: 14px;
+      border-radius: 22px;
+      padding: 16px;
+      border: 2px dashed rgba(255,255,255,.18);
+      background: rgba(255,255,255,.05);
+      display:flex;gap:12px;align-items:flex-start;
+    }
+    .locked h4{margin:0;font-size:16px;font-weight:1000;letter-spacing:.06em;text-transform:uppercase;color:rgba(226,232,240,.75)}
+    .locked p{margin:6px 0 0;color:rgba(226,232,240,.60);font-weight:800}
+
+    /* Small helpers */
+    .mt8{margin-top:8px}
+    .mono{font-variant-numeric: tabular-nums}
+    a{color:inherit}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- HEADER -->
+    <div class="top" role="banner">
+      <div class="row">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+          <div class="name" id="patientName">M.K.</div>
+          <div class="badge">Live Record</div>
+        </div>
+
+        <a class="globe" href="#" title="Open link" aria-label="Open link">
+          <!-- globe icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M2 12h20" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2c3 2.5 5 6 5 10s-2 7.5-5 10c-3-2.5-5-6-5-10S9 4.5 12 2Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="sub" id="diagnosisLine">Colorectal Cancer • Stage IV</div>
+    </div>
+
+    <!-- UPDATED / APPROVED -->
+    <div class="info" role="note" aria-label="Record status">
+      <div>
+        <small>Last updated</small>
+        <div class="mono" id="lastUpdated">04/02/2026, 16:00:51</div>
+      </div>
+
+      <div class="approved" id="approvedBy">
+        <span class="check" aria-hidden="true">✓</span>
+        Approved by Dr. Ahmed
+      </div>
+    </div>
+
+    <!-- CRITICAL ALERTS -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon" aria-hidden="true">!</span>
+        Critical Alerts
+      </div>
+
+      <div class="chips" id="alerts">
+        <div class="chip red">
+          <span class="label">Alert</span>
+          <span class="value">Immunotherapy patient</span>
+        </div>
+
+        <div class="chip orange">
+          <span class="label">Drug allergy</span>
+          <span class="value">Penicillin</span>
+        </div>
+
+        <div class="chip amber">
+          <span class="label">Alert</span>
+          <span class="value">Steroid dependent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREATMENT CONTEXT -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon" aria-hidden="true">∿</span>
+        Treatment Context
+      </div>
+
+      <div class="card">
+        <div class="grid2">
+          <div>
+            <div class="k">Intent</div>
+            <div class="v" id="intent">Palliative</div>
+          </div>
+          <div>
+            <div class="k">Regimen</div>
+            <div class="v" id="regimen">FOLFIRINOX</div>
+          </div>
+          <div>
+            <div class="k">Last cycle</div>
+            <div class="v small mono" id="lastCycle">2024-05-10</div>
+          </div>
+          <div>
+            <div class="k">Cycle</div>
+            <div class="v" id="cycle">8 / 12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEY INVESTIGATIONS -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon" aria-hidden="true">⌁</span>
+        Key Investigations
+      </div>
+
+      <div class="card purple">
+        <ul class="list" id="investigations">
+          <li>
+            <b>CBC</b> <span class="mono" style="opacity:.8">(04 Feb 2026)</span>
+            <div class="mt8 good">– Within treatment protocol</div>
+            <div class="line"></div>
+          </li>
+
+          <li>
+            <b>PET-CT</b> <span class="mono" style="opacity:.8">(04 Feb 2026)</span>
+            <div class="mt8 bad">– Progressive disease</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BIOMARKERS -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon" aria-hidden="true">⟡</span>
+        Biomarkers
+      </div>
+
+      <div class="biochips" id="biomarkers">
+        <div class="bio">RAS/BRAF: <span>KRAS Mutant</span></div>
+        <div class="bio">MSI/MMR: <span>MSI-High</span></div>
+      </div>
+    </div>
+
+    <!-- ONCOLOGIST -->
+    <div class="call" role="group" aria-label="Oncologist contact">
+      <div class="left">
+        <div class="icon" aria-hidden="true">☎︎</div>
+        <div style="min-width:0;">
+          <div class="section-title" style="margin:0 0 6px;letter-spacing:.14em;">Oncologist</div>
+          <h3 id="oncName">Dr. Fahad Al-Ot...</h3>
+          <p id="oncAffil">King Faisal Specialis...</p>
+        </div>
+      </div>
+
+      <!-- Put a real phone number in href below for demo -->
+      <a class="callbtn" id="callLink" href="tel:+96890000000" aria-label="Call oncologist">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.86.31 1.7.57 2.5a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.58-1.09a2 2 0 0 1 2.11-.45c.8.26 1.64.45 2.5.57A2 2 0 0 1 22 16.92Z"
+                stroke="rgba(11,18,32,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- EXTENDED RECORDS (LOCKED) -->
+    <div class="locked" aria-label="Extended records locked">
+      <div class="icon" aria-hidden="true">🔒</div>
+      <div>
+        <h4>Extended Records</h4>
+        <p>Consent required.</p>
+      </div>
+    </div>
+
+    <div style="height:22px"></div>
+  </div>
+
+  <script>
+    /**
+     * MVP demo: static data only.
+     * Optional: allow URL overrides for demo tags, e.g.:
+     *   https://your-site.web.app/?name=MK&stage=IV&allergy=Penicillin
+     */
+    const qs = new URLSearchParams(location.search);
+
+    const setText = (id, value) => {
+      if (!value) return;
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText("patientName", qs.get("name"));
+    setText("diagnosisLine", qs.get("dx"));
+    setText("lastUpdated", qs.get("updated"));
+    setText("approvedBy", qs.get("approved"));
+
+    // Example quick override: ?tel=+9689...
+    const tel = qs.get("tel");
+    if (tel) document.getElementById("callLink").setAttribute("href", "tel:" + tel);
+  </script>
+</body>
+</html>
